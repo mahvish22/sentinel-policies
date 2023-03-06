@@ -4,7 +4,7 @@ import "tfplan/v2" as tfplan
 // that will change once the Terraform plan has been applied.
 aws_s3_buckets = filter tfplan.resource_changes as _, resource_changes {
     resource_changes.type is "aws_s3_bucket" and
-        resource_changes.mode is "managed" and
+       // resource_changes.mode is "managed" and
         (resource_changes.change.actions contains "create" or
             resource_changes.change.actions is ["update"])
 }
@@ -18,9 +18,9 @@ allowed_acls = [
 ]
 
 bucket_tags = rule {
-    all s3_buckets as _, instances {
+    all aws_s3_buckets as _, buckets {
         all required_tags as rt {
-        instances.change.after.tags contains rt
+        buckets.change.after.tags contains rt
         }
     }
 }
