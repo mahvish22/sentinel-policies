@@ -1,6 +1,6 @@
 mock "tfplan/v2" {
   module {
-    source = "./mock-tfplan-v2.sentinel"
+    source = "s3/mock-tfplan-v2.sentinel"
   }
 }
 
