@@ -1,0 +1,336 @@
+import "strings"
+
+providers = {
+	"aws": {
+		"alias": "",
+		"config": {
+			"region": {
+				"constant_value": "us-west-2",
+			},
+		},
+		"full_name":           "registry.terraform.io/hashicorp/aws",
+		"module_address":      "",
+		"name":                "aws",
+		"provider_config_key": "aws",
+		"version_constraint":  "~> 4.56.0",
+	},
+}
+
+resources = {
+	"module.s3-web.aws_s3_bucket.static_website": {
+		"address": "module.s3-web.aws_s3_bucket.static_website",
+		"config": {
+			"bucket": {
+				"references": [
+					"var.website_bucket_name",
+				],
+			},
+			"force_destroy": {
+				"constant_value": true,
+			},
+			"tags": {
+				"references": [
+					"var.tag_name",
+				],
+			},
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "module.s3-web",
+		"name":                "static_website",
+		"provider_config_key": "module.s3-web:aws",
+		"provisioners":        [],
+		"type":                "aws_s3_bucket",
+	},
+	"module.s3-web.aws_s3_bucket_acl.example_bucket_acl": {
+		"address": "module.s3-web.aws_s3_bucket_acl.example_bucket_acl",
+		"config": {
+			"acl": {
+				"constant_value": "public-read",
+			},
+			"bucket": {
+				"references": [
+					"aws_s3_bucket.static_website.id",
+					"aws_s3_bucket.static_website",
+				],
+			},
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "module.s3-web",
+		"name":                "example_bucket_acl",
+		"provider_config_key": "module.s3-web:aws",
+		"provisioners":        [],
+		"type":                "aws_s3_bucket_acl",
+	},
+	"module.s3-web.aws_s3_bucket_policy.allow_read_access": {
+		"address": "module.s3-web.aws_s3_bucket_policy.allow_read_access",
+		"config": {
+			"bucket": {
+				"references": [
+					"aws_s3_bucket.static_website.id",
+					"aws_s3_bucket.static_website",
+				],
+			},
+			"policy": {
+				"references": [
+					"data.aws_iam_policy_document.allow_read_access.json",
+					"data.aws_iam_policy_document.allow_read_access",
+				],
+			},
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "module.s3-web",
+		"name":                "allow_read_access",
+		"provider_config_key": "module.s3-web:aws",
+		"provisioners":        [],
+		"type":                "aws_s3_bucket_policy",
+	},
+	"module.s3-web.aws_s3_bucket_website_configuration.website_config": {
+		"address": "module.s3-web.aws_s3_bucket_website_configuration.website_config",
+		"config": {
+			"bucket": {
+				"references": [
+					"aws_s3_bucket.static_website.id",
+					"aws_s3_bucket.static_website",
+				],
+			},
+			"index_document": [
+				{
+					"suffix": {
+						"constant_value": "index.html",
+					},
+				},
+			],
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "module.s3-web",
+		"name":                "website_config",
+		"provider_config_key": "module.s3-web:aws",
+		"provisioners":        [],
+		"type":                "aws_s3_bucket_website_configuration",
+	},
+	"module.s3-web.data.aws_iam_policy_document.allow_read_access": {
+		"address": "module.s3-web.data.aws_iam_policy_document.allow_read_access",
+		"config": {
+			"statement": [
+				{
+					"actions": {
+						"constant_value": [
+							"s3:GetObject",
+							"s3:ListBucket",
+						],
+					},
+					"principals": [
+						{
+							"identifiers": {
+								"constant_value": [
+									"*",
+								],
+							},
+							"type": {
+								"constant_value": "AWS",
+							},
+						},
+					],
+					"resources": {
+						"references": [
+							"aws_s3_bucket.static_website.arn",
+							"aws_s3_bucket.static_website",
+							"aws_s3_bucket.static_website.arn",
+							"aws_s3_bucket.static_website",
+						],
+					},
+				},
+			],
+		},
+		"count":               {},
+		"depends_on":          [],
+		"for_each":            {},
+		"mode":                "data",
+		"module_address":      "module.s3-web",
+		"name":                "allow_read_access",
+		"provider_config_key": "module.s3-web:aws",
+		"provisioners":        [],
+		"type":                "aws_iam_policy_document",
+	},
+}
+
+provisioners = {}
+
+variables = {
+	"module.s3-web:tag_name": {
+		"default":        "static_website",
+		"description":    "Name of tag of S3 `bucket",
+		"module_address": "module.s3-web",
+		"name":           "tag_name",
+	},
+	"module.s3-web:website_bucket_name": {
+		"default":        "mahvish",
+		"description":    "Name of backend bucket",
+		"module_address": "module.s3-web",
+		"name":           "website_bucket_name",
+	},
+	"tag_n": {
+		"default":        "static_website",
+		"description":    "Name of tag of S3 `bucket",
+		"module_address": "",
+		"name":           "tag_n",
+	},
+	"web_b_name": {
+		"default":        "mahvish-website",
+		"description":    "Name of backend bucket",
+		"module_address": "",
+		"name":           "web_b_name",
+	},
+}
+
+outputs = {
+	"arn": {
+		"depends_on":     [],
+		"description":    "ID of project VPC",
+		"module_address": "",
+		"name":           "arn",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"module.s3-web.arn",
+				"module.s3-web",
+			],
+		},
+	},
+	"domain": {
+		"depends_on":     [],
+		"description":    "Domain name of the S3 bucket",
+		"module_address": "",
+		"name":           "domain",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"module.s3-web.domain",
+				"module.s3-web",
+			],
+		},
+	},
+	"endpoint": {
+		"depends_on":     [],
+		"description":    "Endpoint of the S3 bucket",
+		"module_address": "",
+		"name":           "endpoint",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"module.s3-web.endpoint",
+				"module.s3-web",
+			],
+		},
+	},
+	"module.s3-web:arn": {
+		"depends_on":     [],
+		"description":    "Bucket arn",
+		"module_address": "module.s3-web",
+		"name":           "arn",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"aws_s3_bucket.static_website.arn",
+				"aws_s3_bucket.static_website",
+			],
+		},
+	},
+	"module.s3-web:domain": {
+		"depends_on":     [],
+		"description":    "Domain name of the S3 bucket",
+		"module_address": "module.s3-web",
+		"name":           "domain",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"aws_s3_bucket_website_configuration.website_config.website_domain",
+				"aws_s3_bucket_website_configuration.website_config",
+			],
+		},
+	},
+	"module.s3-web:endpoint": {
+		"depends_on":     [],
+		"description":    "Endpoint of the S3 bucket",
+		"module_address": "module.s3-web",
+		"name":           "endpoint",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"aws_s3_bucket_website_configuration.website_config.website_endpoint",
+				"aws_s3_bucket_website_configuration.website_config",
+			],
+		},
+	},
+	"module.s3-web:name": {
+		"depends_on":     [],
+		"description":    "Name or id of the S3 bucket",
+		"module_address": "module.s3-web",
+		"name":           "name",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"aws_s3_bucket.static_website.id",
+				"aws_s3_bucket.static_website",
+			],
+		},
+	},
+	"name": {
+		"depends_on":     [],
+		"description":    "Name or id of the S3 bucket",
+		"module_address": "",
+		"name":           "name",
+		"sensitive":      false,
+		"value": {
+			"references": [
+				"module.s3-web.name",
+				"module.s3-web",
+			],
+		},
+	},
+}
+
+module_calls = {
+	"s3-web": {
+		"config": {
+			"tag_name": {
+				"references": [
+					"var.tag_n",
+				],
+			},
+			"website_bucket_name": {
+				"references": [
+					"var.web_b_name",
+				],
+			},
+		},
+		"count":              {},
+		"depends_on":         [],
+		"for_each":           {},
+		"module_address":     "",
+		"name":               "s3-web",
+		"source":             "app.terraform.io/terraform_test_cloud/s3-website/aws",
+		"version_constraint": "1.0.0",
+	},
+}
+
+strip_index = func(addr) {
+	s = strings.split(addr, ".")
+	for s as i, v {
+		s[i] = strings.split(v, "[")[0]
+	}
+
+	return strings.join(s, ".")
+}

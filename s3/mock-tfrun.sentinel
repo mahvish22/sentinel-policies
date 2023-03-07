@@ -1,0 +1,36 @@
+id = "run-oDfG4HuN6jQJqf3g"
+created_at = "2023-03-04T09:45:43.214Z"
+message = "Triggered via CLI"
+commit_sha = undefined
+speculative = true
+is_destroy = false
+refresh = true
+refresh_only = false
+replace_addrs = null
+target_addrs = null
+
+variables = {
+	"AWS_ACCESS_KEY_ID": {
+		"category":  "env",
+		"sensitive": true,
+	},
+	"AWS_SECRET_ACCESS_KEY": {
+		"category":  "env",
+		"sensitive": true,
+	},
+}
+
+organization = {
+	"name": "terraform_test_cloud",
+}
+
+workspace = {
+	"auto_apply":        false,
+	"created_at":        "2023-03-03T10:43:03.317Z",
+	"description":       "CLI driven S3 and EC2",
+	"id":                "ws-zLxjLWQLg1i4ct1P",
+	"name":              "cli-driven-demo",
+	"tags":              [],
+	"vcs_repo":          null,
+	"working_directory": "",
+}

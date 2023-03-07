@@ -1,0 +1,304 @@
+import "strings"
+import "types"
+
+_modules = {
+	"root": {
+		"data": {},
+		"modules": {
+			"s3-web": {
+				"config": {},
+				"references": {
+					"tag_name": [
+						"var.tag_n",
+					],
+					"website_bucket_name": [
+						"var.web_b_name",
+					],
+				},
+				"source":  "app.terraform.io/terraform_test_cloud/s3-website/aws",
+				"version": "1.0.0",
+			},
+		},
+		"outputs": {
+			"arn": {
+				"depends_on":  [],
+				"description": "ID of project VPC",
+				"references": [
+					"module.s3-web.arn",
+					"module.s3-web",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+			"domain": {
+				"depends_on":  [],
+				"description": "Domain name of the S3 bucket",
+				"references": [
+					"module.s3-web.domain",
+					"module.s3-web",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+			"endpoint": {
+				"depends_on":  [],
+				"description": "Endpoint of the S3 bucket",
+				"references": [
+					"module.s3-web.endpoint",
+					"module.s3-web",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+			"name": {
+				"depends_on":  [],
+				"description": "Name or id of the S3 bucket",
+				"references": [
+					"module.s3-web.name",
+					"module.s3-web",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+		},
+		"providers": {
+			"aws": {
+				"alias": {
+					"": {
+						"config": {
+							"region": "us-west-2",
+						},
+						"references": {
+							"region": [],
+						},
+						"version": "~> 4.56.0",
+					},
+				},
+				"config": {
+					"region": "us-west-2",
+				},
+				"references": {
+					"region": [],
+				},
+				"version": "~> 4.56.0",
+			},
+		},
+		"resources": {},
+		"variables": {
+			"tag_n": {
+				"default":     "static_website",
+				"description": "Name of tag of S3 `bucket",
+			},
+			"web_b_name": {
+				"default":     "mahvish-website",
+				"description": "Name of backend bucket",
+			},
+		},
+	},
+
+	"module.s3-web": {
+		"data": {
+			"aws_iam_policy_document": {
+				"allow_read_access": {
+					"config": {
+						"statement": [
+							{
+								"actions": [
+									"s3:GetObject",
+									"s3:ListBucket",
+								],
+								"principals": [
+									{
+										"identifiers": [
+											"*",
+										],
+										"type": "AWS",
+									},
+								],
+							},
+						],
+					},
+					"provisioners": null,
+					"references": {
+						"statement": [
+							{
+								"actions": [],
+								"principals": [
+									{
+										"identifiers": [],
+										"type":        [],
+									},
+								],
+								"resources": [
+									"aws_s3_bucket.static_website.arn",
+									"aws_s3_bucket.static_website",
+									"aws_s3_bucket.static_website.arn",
+									"aws_s3_bucket.static_website",
+								],
+							},
+						],
+					},
+				},
+			},
+		},
+		"modules": {},
+		"outputs": {
+			"arn": {
+				"depends_on":  [],
+				"description": "Bucket arn",
+				"references": [
+					"aws_s3_bucket.static_website.arn",
+					"aws_s3_bucket.static_website",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+			"domain": {
+				"depends_on":  [],
+				"description": "Domain name of the S3 bucket",
+				"references": [
+					"aws_s3_bucket_website_configuration.website_config.website_domain",
+					"aws_s3_bucket_website_configuration.website_config",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+			"endpoint": {
+				"depends_on":  [],
+				"description": "Endpoint of the S3 bucket",
+				"references": [
+					"aws_s3_bucket_website_configuration.website_config.website_endpoint",
+					"aws_s3_bucket_website_configuration.website_config",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+			"name": {
+				"depends_on":  [],
+				"description": "Name or id of the S3 bucket",
+				"references": [
+					"aws_s3_bucket.static_website.id",
+					"aws_s3_bucket.static_website",
+				],
+				"sensitive": false,
+				"value":     undefined,
+			},
+		},
+		"providers": {},
+		"resources": {
+			"aws_s3_bucket": {
+				"static_website": {
+					"config": {
+						"force_destroy": true,
+					},
+					"provisioners": null,
+					"references": {
+						"bucket": [
+							"var.website_bucket_name",
+						],
+						"force_destroy": [],
+						"tags": [
+							"var.tag_name",
+						],
+					},
+				},
+			},
+			"aws_s3_bucket_acl": {
+				"example_bucket_acl": {
+					"config": {
+						"acl": "public-read",
+					},
+					"provisioners": null,
+					"references": {
+						"acl": [],
+						"bucket": [
+							"aws_s3_bucket.static_website.id",
+							"aws_s3_bucket.static_website",
+						],
+					},
+				},
+			},
+			"aws_s3_bucket_policy": {
+				"allow_read_access": {
+					"config":       {},
+					"provisioners": null,
+					"references": {
+						"bucket": [
+							"aws_s3_bucket.static_website.id",
+							"aws_s3_bucket.static_website",
+						],
+						"policy": [
+							"data.aws_iam_policy_document.allow_read_access.json",
+							"data.aws_iam_policy_document.allow_read_access",
+						],
+					},
+				},
+			},
+			"aws_s3_bucket_website_configuration": {
+				"website_config": {
+					"config": {
+						"index_document": [
+							{
+								"suffix": "index.html",
+							},
+						],
+					},
+					"provisioners": null,
+					"references": {
+						"bucket": [
+							"aws_s3_bucket.static_website.id",
+							"aws_s3_bucket.static_website",
+						],
+						"index_document": [
+							{
+								"suffix": [],
+							},
+						],
+					},
+				},
+			},
+		},
+		"variables": {
+			"tag_name": {
+				"default":     "static_website",
+				"description": "Name of tag of S3 `bucket",
+			},
+			"website_bucket_name": {
+				"default":     "mahvish",
+				"description": "Name of backend bucket",
+			},
+		},
+	},
+}
+
+module_paths = [
+	[],
+	[
+		"s3-web",
+	],
+]
+
+module = func(path) {
+	if types.type_of(path) is not "list" {
+		error("expected list, got", types.type_of(path))
+	}
+
+	if length(path) < 1 {
+		return _modules.root
+	}
+
+	addr = []
+	for path as p {
+		append(addr, "module")
+		append(addr, p)
+	}
+
+	return _modules[strings.join(addr, ".")]
+}
+
+data = _modules.root.data
+modules = _modules.root.modules
+providers = _modules.root.providers
+resources = _modules.root.resources
+variables = _modules.root.variables
+outputs = _modules.root.outputs
